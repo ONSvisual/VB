@@ -9,7 +9,7 @@
 
   let config, script, chartCss;
 
-  $: theScript = `<style> ${chartCss} <\/style>`; 
+  // $: theScript = `<style type="text/css" id="injectedStyle"> ${chartCss} <\/style>`; 
 
   $: charts = liveQuery(async () => {
     const charts = await db.Templates.toArray();
@@ -112,7 +112,7 @@
       ")";
     console.log("script", sessionStorage.script);
     script = eval(sessionStorage.script);
-    //chartCss = css;
+    chartCss = css;
     return config;
   }
 
@@ -135,25 +135,28 @@
 </script>
 
 <svelte:head>
-  {@html theScript}
+  {@html `<style type="text/css" id="injectedStyle"> ${chartCss} <\/style>`}
 </svelte:head>
 
 <div class="outer">
   <div class="controls">
 {#if $projects}
+<label for="projects">Select a project:  
   <select name="projects" bind:value={selectedProject}>
     {#each Object.values($projects) as project}
       <option value={project}>{project.projectName}</option>
     {/each}
-  </select>
+  </select></label><br><br>
 
-  
-    <table>{#if selectedProject && $charts}
+  <label for="addRemove">Add or remove figures:</label>
+    <table name="addRemove">{#if selectedProject && $charts}
+      <tr><th ><b>Figure name</b></th><th>Chart type</th><th style="color:red"></th></tr>
       {#each selectedProject.figures as figure}
-        <tr><td contenteditable=true><b>{figure.figureName}</b></td><td>{figure.chartName}</td><td style="color:red">X</td></tr>
+        <tr><td contenteditable=true>{figure.figureName}</td><td>{figure.chartName}</td><td style="color:red">X</td></tr>
       {/each}{/if}
 
       {#if selectedChart}
+      <tr>.<td> </td><td></td><td></td></tr>
       <FigureAdder
 
     projectName="dvc9900"
@@ -163,6 +166,7 @@
     {charts}
     figureName=""
   >  
+  
   <td>
     {#if $charts}
     <select name="chart" bind:value={selectedChart}>
@@ -175,6 +179,7 @@
  
 </FigureAdder>
 {/if}
+
     </table>
   {/if}
 </div>
@@ -202,7 +207,10 @@
 
 <style>
   @import './global.css'; 
-  td{padding:0px 5px 0px 10px}
+  th{
+    text-align: left;
+  }
+  td,th{padding:0px 5px 0px 10px}
   table{border:1px solid grey}
   .outer{
     margin: 0px auto;
