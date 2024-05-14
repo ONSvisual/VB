@@ -6,7 +6,7 @@
 	import {onMount} from "svelte"
 	import {now} from "../currentChoices"
   	import Tidy from "./Tidy.svelte"
-
+	import { HSplitPane } from 'svelte-split-pane'
 	let config, script, chartCss, chosenName, currentProject, figureName, loaded=0
 	  
 	async function setupDB(projectName, figureName, chartName, chartScripts) {
@@ -196,80 +196,367 @@
 	{@html `<style type="text/css" id="injectedStyle"> ${$now.currentChart.chartScripts.css} <\/style>`}
 	{/if}
   </svelte:head>
-  
-  <div class="outer">
-	<div class="controls">
-  {#if $now.currentProject.projectName}
-  <!-- <label for="projects">Select a project:  
-	<select name="projects" bind:value={currentProject}>
-	  {#each Object.values($projects) as project}
-		<option value={project}>{project.projectName}</option>
-	  {/each}
-	</select></label><br><br> -->
-  
-	<label for="addRemove">Add or remove figures from {$now.currentProject.projectName}</label>
-	  <table name="addRemove" class="controlTable">{#if $now.currentProject && $charts}
-		<tr><th ><b>Figure name</b></th><th>Chart type</th><th style="color:red"></th></tr>
-		{#each $now.currentProject.figures as figure}
-		  <tr><td><button  on:click={()=>$now.currentChart=figure}>{figure.figureName}</button></td><td>{figure.chartName}</td><td><button style="color:red">X</button></td></tr>
-		{/each}{/if}
-  
-		{#if $now.currentChart}
-		<tr></tr>
-		<hr>
-		<tr><td>Add a figure:</td><td></td><td></td></tr>
-		<tr>
-		  <td>
-			<input type="text" placeholder="Figure name" bind:value={figureName}/>
-		  </td>
-		  <td>
-			{#if $charts}
-			<select name="chart" bind:value={$now.currentChart}>
-			  {#each $charts as chart}
-				<option value={chart}>{chart.chartName}</option>
-			  {/each}</select
-			>
-			{/if}
-		   </td>
-		  <td>
-			<button on:click={()=>{setupDB($now.currentProject.projectName, figureName, $now.currentChart.chartName, $now.currentChart.chartScripts);addFigureToProject($now.currentProject.projectName, figureName, $now.currentChart.chartName, $now.currentChart.chartScripts)}}>Save</button>
-		  </td>
-		</tr>
-  
-  {/if}
-  
-	  </table>
-	{/if}
-  </div>
-  <br>
-  {#if $charts}
-  <select name="chart" bind:value={$now.currentChart} style="display:none">
-	  {#each $charts as chart}
-		<option value={chart}>{chart.chartName}</option>
-	  {/each}</select
-	>
-  {/if}
-  
-  <!-- {#if config}{JSON.stringify(config)}{/if} -->
-  <!--This is what D3 renders-->
-  <div class="chartBox">
-	Output:
+  {#if 1}
+
+
+  <HSplitPane>
+    <left slot="left" class="splitScreen">
+      <!--This is what D3 renders-->
+<div class="chartBox">
 	<h5 id="accessibleSummary" class="visuallyhidden">.</h5>
 	<div id="select"></div>
 	<div aria-hidden="true" id="legend"></div>
 	<div id="graphic" aria-hidden="true"></div>
 	<h5 id="source">.</h5>
-  </div></div>
+  </div>
   <!--End of what D3 renders-->
-  
-  <div class="dataBox">
-{#if $now.currentChart}
-	<Tidy csv={$now.currentChart.chartScripts.data}/>
+    </left>
+
+    <right slot="right" class="splitScreen">
+      <b color="#0f8243">
+        <a
+          href="https://docs.google.com/spreadsheets/d/1qlDgJIJCdumMRwLmI1_KF4yAKwtDoHmToYKEwZMq_zU/edit?usp=sharing"
+          rel="noreferrer"
+          target="_blank">
+          Please use this link to share feedback (opens in a new tab)
+        </a>
+      </b>
+
+
+  {#if $now.currentChart.config.essential}
+  <a
+	href={$now.currentChart.config.essential.graphic_data_url}
+	target="_blank"
+	rel="noreferrer"
+	download="data.csv">
+	<h3 style:color="slategrey">data source</h3>
+  </a>
+  <input
+	type="url"
+	class="full"
+	on:change={(e) => {
+	  $now.currentChart.config.essential.graphic_data_url = e.target.value
+	  config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+	  
+	}}
+	value={$now.currentChart.config.essential.graphic_data_url} />
+ 
 {/if}
-</div>
+
+{#each Object.keys($now.currentChart.config) as main, i}
+  {#if main != 'elements' && main !== 'chart_build'}
+	<h1 style:color="#666">config: {main}</h1>
+	{#each Object.keys($now.currentChart.config[main]) as sub, ii}
+	  {#if sub !== 'graphic_data_url'}
+		{#if main == 'css'}
+		  <h3
+			style:color="slategrey"
+			on:mouseover={document
+			  .querySelectorAll(sub)
+			  .forEach((element) => {
+				element.classList.add('highlighted')
+			  })}
+			on:mouseout={document
+			  .querySelectorAll(sub)
+			  .forEach((element) => {
+				element.classList.remove('highlighted')
+			  })}>
+			{sub}
+		  </h3>
+		{:else}
+		  <h3 style:color="slategrey">{sub}</h3>
+		{/if}
+
+		{#if $now.currentChart.config.chart_build}
+		  {#if $now.currentChart.config.chart_build[sub] == 'number'}
+			<input
+			  type="number"
+			  bind:value={$now.currentChart.config[main][sub]}
+			  on:change={(e) => {
+				$now.currentChart.config[main][sub] = e.target.value
+				config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				
+			  }} />
+		  {:else if $now.currentChart.config.chart_build[sub] == 'radio'}
+			<div>
+			  {#each $now.currentChart.config.chart_build[sub + '_options'] as option}
+				<label for={option}>{option}</label>
+				<input
+				  type="radio"
+				  name={$now.currentChart.config.chart_build[sub]}
+				  id={option}
+				  bind:value={option}
+				  checked={option == $now.currentChart.config[main][sub]}
+				  on:change={(e) => {
+					$now.currentChart.config[main][sub] = e.target.value
+					config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				  }} />
+			  {/each}
+			</div>
+		  {:else if $now.currentChart.config.chart_build[sub] == 'colour'}
+			<div>
+
+			  {#each $now.currentChart.config.chart_build[sub + '_options'] as option, i}
+				<label for={option}>{option}:</label>
+				<input
+				  type="color"
+				  name={$now.currentChart.config.chart_build[sub][i]}
+				  id={option}
+				  bind:value={option}
+				  on:change={(e) => {
+					$now.currentChart.config[main][sub][i] = e.target.value
+					config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				  }} />
+			  {/each}
+			</div>
+		  {:else if $now.currentChart.config.chart_build[sub] == 'textarea'}
+			<textarea
+			  class="full"
+			  type="text"
+			  name={$now.currentChart.config.chart_build[sub]}
+			  id={$now.currentChart.config.chart_build[sub]}
+			  bind:value={$now.currentChart.config[main][sub]}
+			  on:change={(e) => {
+				$now.currentChart.config[main][sub] = e.target.value
+				config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				
+			  }} />
+		  {:else if $now.currentChart.config.chart_build[sub] == 'dThreeFormat'}
+			<select
+			  class="full"
+			  bind:value={$now.currentChart.config[main][sub]}
+			  on:change={(e) => {
+				$now.currentChart.config[main][sub] = e.target.value
+				config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				
+			  }}>
+			  {#each d3Format as option, i}
+				<option value={option[1]}>
+				  {option[0]} ({option[1]})
+				</option>
+			  {/each}
+			</select>
+		  {:else if typeof $now.currentChart.config[main][sub] == 'object'}
+			{#each Object.keys($now.currentChart.config[main][sub]) as subsub}
+			  {#if typeof $now.currentChart.config[main][sub][subsub] == 'object'}
+				<h4>Object {subsub}</h4>
+				<div>
+				  {#each Object.keys($now.currentChart.config[main][sub][subsub]) as subsubsub}
+					<label for={'field_' + subsubsub} class="label">
+					  {subsubsub}:
+					</label>
+					<input
+					  type="number"
+					  class="full"
+					  id="field_{subsubsub}"
+					  on:change={(e) => {
+						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+					  }}
+					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
+				  {/each}
+				</div>
+			  {:else if main=="css"}
+				<label for={'field_' + subsub} class="label">
+				  {subsub}:
+				</label>
+				<input
+				  type="text"
+				  class="full"
+				  id="field_css_{sub}_{subsub}"
+				  on:change={(e) => {
+					$now.currentChart.config[main][sub][subsub] = e.target.value
+					config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+					//NEED TO ADD NEW CSS * ** *** ****
+				  }}
+				  value={$now.currentChart.config[main][sub][subsub]} />
+			  {/if}
+			{/each}
+		  {:else}
+			<textarea
+			  class="full"
+			  on:change={(e) => {
+				$now.currentChart.config[main][sub] = e.target.value
+				config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				
+			  }}
+			  value={$now.currentChart.config[main][sub]} />
+		  {/if}
+		{:else if typeof $now.currentChart.config[main][sub] == 'object'}
+		  {#each Object.keys($now.currentChart.config[main][sub]) as subsub}
+			{#if typeof $now.currentChart.config[main][sub][subsub] == 'object'}
+			  <h4>{subsub}</h4>
+			  <div>
+				{#each Object.keys($now.currentChart.config[main][sub][subsub]) as subsubsub}
+				  {#if typeof $now.currentChart.config[main][sub][subsub][subsubsub] == 'string' && $now.currentChart.config[main][sub][subsub][subsubsub][0] == '#'}
+					<label for="colour_{subsubsub}">{subsubsub}:</label>
+
+					<input
+					  type="color"
+					  id="colour_{subsubsub}"
+					  on:change={(e) => {
+						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+		
+					  }}
+					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
+				  {:else if typeof $now.currentChart.config[main][sub][subsub][subsubsub] == 'string'}
+					<label for="text_{subsubsub}">{subsubsub}:</label>
+					<input
+					  type="number"
+					  id="text_{subsubsub}"
+					  on:change={(e) => {
+						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+		
+					  }}
+					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
+				  {:else if !isNaN($now.currentChart.config[main][sub][subsub][subsubsub])}
+					<label for="number_{subsubsub}">{subsubsub}:</label>
+					<input
+					  type="number"
+					  id="number_{subsubsub}"
+					  on:change={(e) => {
+						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+					  }}
+					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
+				  {:else}
+					<label for={'field_' + subsubsub} class="label">
+					  {subsub}:
+					</label>
+					<input
+					  type="number"
+					  id="field_{subsubsub}"
+					  on:change={(e) => {
+						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+					  }}
+					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
+				  {/if}
+				{/each}
+			  </div>
+			{:else}
+			  <label for={'input_' + subsub} class="label">
+				{subsub}:
+			  </label>
+			  {#if typeof $now.currentChart.config[main][sub][subsub] == 'string' && $now.currentChart.config[main][sub][subsub][0] == '#'}
+				<input
+				  type="color"
+				  id="input_{subsub}"
+				  on:change={(e) => {
+					$now.currentChart.config[main][sub][subsub] = e.target.value
+					config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+
+				  }}
+				  value={$now.currentChart.config[main][sub][subsub]} />
+			  {:else if typeof $now.currentChart.config[main][sub][subsub] == 'string'}
+				<input
+				  type="text"
+				  id="input_{subsub}"
+				  class="full"
+				  on:change={(e) => {
+					$now.currentChart.config[main][sub][subsub] = e.target.value
+					config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+
+				  }}
+				  value={$now.currentChart.config[main][sub][subsub]} />
+			  {:else if !isNaN($now.currentChart.config[main][sub][subsub])}
+				<input
+				  type="number"
+				  on:change={(e) => {
+					$now.currentChart.config[main][sub][subsub] = e.target.value
+					config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				  }}
+				  value={$now.currentChart.config[main][sub][subsub]} />
+			  {:else}
+				<textarea
+				  class="full"
+				  on:change={(e) => {
+					$now.currentChart.config[main][sub][subsub] = e.target.value
+					config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+				  }}
+				  value={$now.currentChart.config[main][sub][subsub]} />
+			  {/if}
+			{/if}
+		  {/each}
+		{:else}
+		  <textarea
+			class="full"
+			on:change={(e) => {
+			  $now.currentChart.config[main][sub] = e.target.value
+			  config = ($now.currentChart.config)
+	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+console.log("config",config)
+			}}
+			value={$now.currentChart.config[main][sub]} />
+		{/if}
+	  {/if}
+	  <hr />
+	{/each}
+  {/if}
+{/each}
+
+</right>
+</HSplitPane>
+{/if}
+<div class="highlighted" style="width:0; height:0;" />
   
   <style>
 	@import '../global.css'; 
+	:global(.left){
+	
+	margin-top: 80px;
+    height: calc(100vh - 100px) !important;
+ 	}
+	:global(.separator){
+		height:  calc(100vh - 100px) !important;
+	}
+	:global(.right){
+	margin-top: 80px;
+	position: absolute;
+    top: 0;
+    right: 0;
+    height: calc(100vh - 100px) !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
+	}
+	
+
 	th{
 	  text-align: left;
 	}
@@ -284,22 +571,99 @@
   }
   .chartBox{
 	background-color: white;
-	width:calc(50% - 5px);
-	position:absolute;
-	left:calc(50% + 5px);
-	bottom:0;
-	height:50%;
   }
-  .dataBox{
-	background-color: white;
-	width:50%;
-	height:50%;
-	position:absolute;
-	left:5px;
-	bottom:0
-  }
+
   .controlTable{
 	padding: 5px;
+  }
+  input[type='number'] {
+    width: 50px;
+    margin-right: 30px;
+  }
+  .full {
+    width: 95%;
+    padding: 5px;
+  }
+
+
+
+  .tablewrapper {
+    height: 150px;
+    overflow: scroll;
+    border: 1px solid black;
+  }
+
+  thead tr {
+    background-color: #206095;
+    color: #ffffff;
+    text-align: middle;
+  }
+  th,
+  td {
+    padding: 5px;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+
+  tbody tr:last-of-type {
+    border-bottom: 2px solid #206095;
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-family: inherit;
+    font-size: inherit;
+    -webkit-padding: 0.4em 0;
+    padding: 0.4em;
+    margin: 0 0 0.5em 0;
+    box-sizing: border-box;
+    border: 2px solid #5a5a5a;
+    border-radius: 2px;
+    font-weight: bolder;
+    max-width: 99%;
+    background: transparent;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='8 4 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l10 10 10-10z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 5px;
+  }
+  h3 {
+    margin-bottom: 5px;
+    margin-top: 10px;
+  }
+  h4 {
+    margin-bottom: 5px;
+    margin-top: 10px;
+    color: #999797;
+  }
+  hr {
+    width: 90%;
+    text-align: left;
+    margin-left: 5%;
+    height: 5px;
+    background: rgb(252, 237, 249);
+    border: none;
+  }
+  label {
+    margin-left: 15px;
+  }
+  .css {
+    width: 100%;
+    height: 300px;
+  }
+  :global(.left, .right) {
+    padding: 20px;
+  }
+  :global(.highlighted) {
+    outline: solid;
   }
   </style>
   

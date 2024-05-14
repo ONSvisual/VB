@@ -154,7 +154,7 @@
     sessionStorage.config = conf; //.replace("data.csv",encodeURIComponent(csvString))
     config = eval(sessionStorage.config);
     //console.log(JSON.stringify(config));
-
+    $now.currentChart.config=config;
     sessionStorage.script =
       scr.replace(
         "d3.csv(config.essential.graphic_data_url",
