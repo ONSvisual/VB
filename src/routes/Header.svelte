@@ -13,17 +13,17 @@
 			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 		</svg>
 		<ul>
-			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">0. Projects</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">1. Chart choices</a>
+			<li aria-current={$page.url.pathname === '/project' ? 'page' : undefined}>
+				<a href="/project">0. Projects</a>
 			</li>
 			<li aria-current={$page.url.pathname === '/chart' ? 'page' : undefined}>
-				<a href="/chart">2. Replace datasets</a>
+				<a href="/chart">1. Chart choices</a>
 			</li>
-			<li aria-current={$page.url.pathname.startsWith('/text') ? 'page' : undefined}>
-				<a href="/text">3. Tweak charts</a>
+			<li aria-current={$page.url.pathname === '/data' ? 'page' : undefined}>
+				<a href="/data">2. Replace datasets</a>
+			</li>
+			<li aria-current={$page.url.pathname.startsWith('/tweak') ? 'page' : undefined}>
+				<a href="/tweak">3. Tweak charts</a>
 			</li>
 			<li aria-current={$page.url.pathname.startsWith('/features') ? 'page' : undefined}>
 				<a href="/features">4. Add features</a>

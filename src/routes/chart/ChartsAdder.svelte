@@ -1,6 +1,6 @@
 <!-- FriendAdder.svelte -->
 <script>
-    import { db } from "./db";
+    import { db } from "../db";
     import VB from "./VB";
   
     let status = "";
@@ -28,7 +28,7 @@
     Object.keys(VB.Templates).forEach(e=>addData(e, VB.Templates[e]))
 console.log(status)
   </script>
-  <p>{status}</p>
+  <!-- <p>{status}</p> -->
   <!-- <div>
     
     <fieldset>
