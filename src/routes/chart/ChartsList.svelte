@@ -2,7 +2,7 @@
 <script>
   import { liveQuery } from "dexie";
   import { db } from "../db";
-  import FigureAdder from "./FigureAdder.svelte";
+  import FigureAdder from "../FigureAdder.svelte";
   import {onMount} from "svelte"
   import {now} from "../currentChoices"
 
@@ -145,7 +145,7 @@
       document.querySelector("#legend").innerHTML = "";
       document.querySelector("#graphic").innerHTML = "";
       document.querySelector("#source").innerHTML = "";
-
+      chartCss = css;
     let csvString = data;
     sessionStorage.data = csvString
       .replace(/(?:\r\n|\r|\n)/g, "\\n")
@@ -167,7 +167,7 @@
       ")";
     //console.log("script", sessionStorage.script);
     script = eval(sessionStorage.script);
-    chartCss = css;
+    
     return config;
   }
   }
@@ -186,6 +186,7 @@
   
   let saveChart = () => 1;
   //$: console.log("chosenName", chosenName);
+  onMount(()=>loadProject($now.currentProject))
 </script>
 
 <svelte:head>
@@ -205,14 +206,16 @@
   </select></label><br><br> -->
 
   <label for="addRemove">Add or remove figures from {$now.currentProject.projectName}</label>
-    <table name="addRemove">{#if $now.currentProject && $charts}
+    <table name="addRemove" class="controlTable">{#if $now.currentProject && $charts}
       <tr><th ><b>Figure name</b></th><th>Chart type</th><th style="color:red"></th></tr>
       {#each $now.currentProject.figures as figure}
-        <tr><td><button  on:click={()=>$now.currentChart=figure}>{figure.figureName}</button></td><td>{figure.chartName}</td><td style="color:red">X</td></tr>
+        <tr><td><button  on:click={()=>$now.currentChart=figure}>{figure.figureName}</button></td><td>{figure.chartName}</td><td><button style="color:red">X</button></td></tr>
       {/each}{/if}
 
       {#if $now.currentChart}
-      <tr>.<td> </td><td></td><td></td></tr>
+      <tr></tr>
+      <hr>
+      <tr><td>Add a figure:</td><td></td><td></td></tr>
       <tr>
         <td>
           <input type="text" placeholder="Figure name" bind:value={figureName}/>
@@ -259,7 +262,7 @@
 
 
 <style>
-  @import './global.css'; 
+  @import '../global.css'; 
   th{
     text-align: left;
   }
@@ -274,5 +277,8 @@
 }
 .chartBox{
   background-color: white;
+}
+.controlTable{
+  padding: 5px;
 }
 </style>

@@ -1,6 +1,6 @@
 <!-- FriendAdder.svelte -->
 <script>
-    import { db } from "../db";
+    import { db } from "./db";
 
     export let projectName="dvc9900", chartName, chartScripts, selectedChart, charts
     let figureName

@@ -1,7 +1,9 @@
 <script>
 	import { page } from '$app/stores';
-	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
+	import { now } from "./currentChoices"
+
+	$: visibility = $now.currentProject?false:true
+
 </script>
 
 <header>
@@ -14,22 +16,22 @@
 		</svg>
 		<ul>
 			<li aria-current={$page.url.pathname === '/project' ? 'page' : undefined}>
-				<a href="/project">0. Projects</a>
+				<a href="/project" >0. Projects</a>
 			</li>
-			<li aria-current={$page.url.pathname === '/chart' ? 'page' : undefined}>
-				<a href="/chart">1. Chart choices</a>
+			<li aria-current={$page.url.pathname === '/chart' ? 'page' : undefined} class:greyed={visibility}>
+				<a href="/chart" class:greyed={visibility}>1. Chart choices</a>
 			</li>
-			<li aria-current={$page.url.pathname === '/data' ? 'page' : undefined}>
-				<a href="/data">2. Replace datasets</a>
+			<li aria-current={$page.url.pathname === '/data' ? 'page' : undefined} class:greyed={visibility}>
+				<a href="/data" class:greyed={visibility}>2. Replace datasets</a>
 			</li>
-			<li aria-current={$page.url.pathname.startsWith('/tweak') ? 'page' : undefined}>
-				<a href="/tweak">3. Tweak charts</a>
+			<li aria-current={$page.url.pathname.startsWith('/tweak') ? 'page' : undefined} class:greyed={visibility}>
+				<a href="/tweak" class:greyed={visibility}>3. Tweak charts</a>
 			</li>
-			<li aria-current={$page.url.pathname.startsWith('/features') ? 'page' : undefined}>
-				<a href="/features">4. Add features</a>
+			<li aria-current={$page.url.pathname.startsWith('/features') ? 'page' : undefined} class:greyed={visibility}>
+				<a href="/features" class:greyed={visibility}>4. Add features</a>
 			</li>
-			<li aria-current={$page.url.pathname.startsWith('/download') ? 'page' : undefined}>
-				<a href="/download">5. Download</a>
+			<li aria-current={$page.url.pathname.startsWith('/download') ? 'page' : undefined} class:greyed={visibility}>
+				<a href="/download" class:greyed={visibility}>5. Download</a>
 			</li>
 			<!-- <li aria-current={$page.url.pathname.startsWith('/help') ? 'page' : undefined}>
 				<a href="/help">help</a>
@@ -131,5 +133,10 @@
 
 	a:hover {
 		color: var(--color-theme-1);
+	}
+
+	.greyed{
+		color:lightgrey;
+		pointer-events: none;
 	}
 </style>
