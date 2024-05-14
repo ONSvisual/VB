@@ -197,7 +197,7 @@
 
 <div class="outer">
   <div class="controls">
-{#if $now.currentProject.projectName}
+{#if $now.currentProject}
 <!-- <label for="projects">Select a project:  
   <select name="projects" bind:value={currentProject}>
     {#each Object.values($projects) as project}
