@@ -6,7 +6,7 @@
     import { db } from "../db";
     let status
 
-    async function updateDB(e) {
+    async function updateDB_csv(e) {
         console.log("now",$now)
       try {
           const id = await db.Projects
@@ -14,7 +14,7 @@
           .equals($now.currentProject.projectName)
           .modify(x => x.figures
                 .find(e=>e.figureName=$now.currentChart.figureName)
-                .chartScripts.data=$now.currentChart.chartScripts.data
+                .chartScripts.data_csv=$now.currentChart.chartScripts.data_csv
             );
 
           status = `${$now.currentChart.figureName} data sucessfully saved`;
@@ -54,7 +54,7 @@
 <h2>
 Paste your data from Excel
 </h2>
-<button class:edited={unedited} on:click={updateDB}>Save this data</button>
+<button class:edited={unedited} on:click={updateDB_csv}>Save this data</button>
 <textarea style="width:95%" on:input="{e => readDSV(e.target.value)}" rows=20  id="csvdata">{tsvFormat(csvParse(csv))}</textarea>
 
 <p>

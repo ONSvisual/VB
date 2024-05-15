@@ -16,6 +16,14 @@
 		<li>Move to Step 2 to manipulate the data for each chart</li>
 	</ol>
 </section>
+<b color="#0f8243">
+	<a
+	  href="https://docs.google.com/spreadsheets/d/1qlDgJIJCdumMRwLmI1_KF4yAKwtDoHmToYKEwZMq_zU/edit?usp=sharing"
+	  rel="noreferrer"
+	  target="_blank">
+	  Please use this link to share feedback (opens in a new tab)
+	</a>
+  </b>
 
 <style>
 :global(section) {

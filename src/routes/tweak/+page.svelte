@@ -7,7 +7,26 @@
 	import {now} from "../currentChoices"
 	import { HSplitPane } from 'svelte-split-pane'
 	let config, script, chartCss, chosenName, currentProject, figureName, loaded=0
-	  
+	
+	async function updateDB_config(e) {
+        console.log("now",$now)
+      try {
+          const id = await db.Projects
+          .where('projectName')
+          .equals($now.currentProject.projectName)
+          .modify(x => x.figures
+                .find(e=>e.figureName=$now.currentChart.figureName)
+                .chartScripts.config_js=$now.currentChart.chartScripts.config_js
+            );
+
+          status = `${$now.currentChart.figureName} data sucessfully saved`;
+
+      } catch (error) {
+        status = `Failed to update ${$now.currentChart.figureName}: ${error}`;
+      }
+      console.log("data update:",status)
+    }
+	
 	async function setupDB(projectName, figureName, chartName, chartScripts) {
 		try {
 			const id = await db.Projects.add({
@@ -65,11 +84,11 @@
 	  if (pr && pr.figures) $now.currentChart = pr.figures[0]
 	  if ($now.currentChart) populate(
 		$now.currentChart.chartName,
-		$now.currentChart.chartScripts.config,
-		$now.currentChart.chartScripts.script,
-		$now.currentChart.chartScripts.data,
-		$now.currentChart.chartScripts.css,
-		$now.currentChart.chartScripts.comparison
+      $now.currentChart.chartScripts.config_js,
+      $now.currentChart.chartScripts.script_js,
+      $now.currentChart.chartScripts.data_csv,
+      $now.currentChart.chartScripts.chart_css,
+      $now.currentChart.chartScripts.comparison_csv
 	  );
 	  loaded=1
 	}
@@ -177,22 +196,24 @@
 	$: $now.currentChart &&
 	  populate(
 		$now.currentChart.chartName,
-		$now.currentChart.chartScripts.config,
-		$now.currentChart.chartScripts.script,
-		$now.currentChart.chartScripts.data,
-		$now.currentChart.chartScripts.css,
-		$now.currentChart.chartScripts.comparison
+      $now.currentChart.chartScripts.config_js,
+      $now.currentChart.chartScripts.script_js,
+      $now.currentChart.chartScripts.data_csv,
+      $now.currentChart.chartScripts.chart_css,
+      $now.currentChart.chartScripts.comparison_csv
 	  );
 	
 	  onMount(()=>loadProject($now.currentProject))
 
 	let saveChart = () => 1;
 	//$: console.log("chosenName", chosenName);
+
+	$: $now.currentChart && updateDB_config()
   </script>
   
   <svelte:head>
 	{#if $now.currentChart}
-	{@html `<style type="text/css" id="injectedStyle"> ${$now.currentChart.chartScripts.css} <\/style>`}
+	{@html `<style type="text/css" id="injectedStyle"> ${$now.currentChart.chartScripts.chart_css} <\/style>`}
 	{/if}
   </svelte:head>
   {#if 1}
@@ -212,14 +233,6 @@
     </div>
 
     <div class="right">
-      <b color="#0f8243">
-        <a
-          href="https://docs.google.com/spreadsheets/d/1qlDgJIJCdumMRwLmI1_KF4yAKwtDoHmToYKEwZMq_zU/edit?usp=sharing"
-          rel="noreferrer"
-          target="_blank">
-          Please use this link to share feedback (opens in a new tab)
-        </a>
-      </b>
 
 {#if $now.currentChart}
   {#if $now.currentChart.config.essential}
@@ -236,7 +249,7 @@
 	on:change={(e) => {
 	  $now.currentChart.config.essential.graphic_data_url = e.target.value
 	  config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 	  
 	}}
@@ -276,7 +289,7 @@ console.log("config",config)
 			  on:change={(e) => {
 				$now.currentChart.config[main][sub] = e.target.value
 				config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				
 			  }} />
@@ -293,7 +306,7 @@ console.log("config",config)
 				  on:change={(e) => {
 					$now.currentChart.config[main][sub] = e.target.value
 					config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				  }} />
 			  {/each}
@@ -311,7 +324,7 @@ console.log("config",config)
 				  on:change={(e) => {
 					$now.currentChart.config[main][sub][i] = e.target.value
 					config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				  }} />
 			  {/each}
@@ -326,7 +339,7 @@ console.log("config",config)
 			  on:change={(e) => {
 				$now.currentChart.config[main][sub] = e.target.value
 				config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				
 			  }} />
@@ -337,7 +350,7 @@ console.log("config",config)
 			  on:change={(e) => {
 				$now.currentChart.config[main][sub] = e.target.value
 				config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				
 			  }}>
@@ -363,7 +376,7 @@ console.log("config",config)
 					  on:change={(e) => {
 						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
 						config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 					  }}
 					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
@@ -380,7 +393,7 @@ console.log("config",config)
 				  on:change={(e) => {
 					$now.currentChart.config[main][sub][subsub] = e.target.value
 					config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 					//NEED TO ADD NEW CSS * ** *** ****
 				  }}
@@ -393,7 +406,7 @@ console.log("config",config)
 			  on:change={(e) => {
 				$now.currentChart.config[main][sub] = e.target.value
 				config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				
 			  }}
@@ -414,7 +427,7 @@ console.log("config",config)
 					  on:change={(e) => {
 						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
 						config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 		
 					  }}
@@ -427,7 +440,7 @@ console.log("config",config)
 					  on:change={(e) => {
 						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
 						config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 		
 					  }}
@@ -440,7 +453,7 @@ console.log("config",config)
 					  on:change={(e) => {
 						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
 						config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 					  }}
 					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
@@ -454,7 +467,7 @@ console.log("config",config)
 					  on:change={(e) => {
 						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
 						config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 					  }}
 					  value={$now.currentChart.config[main][sub][subsub][subsubsub]} />
@@ -472,7 +485,7 @@ console.log("config",config)
 				  on:change={(e) => {
 					$now.currentChart.config[main][sub][subsub] = e.target.value
 					config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 
 				  }}
@@ -485,7 +498,7 @@ console.log("config",config)
 				  on:change={(e) => {
 					$now.currentChart.config[main][sub][subsub] = e.target.value
 					config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 
 				  }}
@@ -496,7 +509,7 @@ console.log("config",config)
 				  on:change={(e) => {
 					$now.currentChart.config[main][sub][subsub] = e.target.value
 					config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				  }}
 				  value={$now.currentChart.config[main][sub][subsub]} />
@@ -506,7 +519,7 @@ console.log("config",config)
 				  on:change={(e) => {
 					$now.currentChart.config[main][sub][subsub] = e.target.value
 					config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 				  }}
 				  value={$now.currentChart.config[main][sub][subsub]} />
@@ -519,7 +532,7 @@ console.log("config",config)
 			on:change={(e) => {
 			  $now.currentChart.config[main][sub] = e.target.value
 			  config = ($now.currentChart.config)
-	  $now.currentChart.chartScripts.config = "config = " + JSON.stringify(config)
+	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
 			}}
 			value={$now.currentChart.config[main][sub]} />

@@ -149,9 +149,12 @@
 		document.querySelector("#source").innerHTML = "";
   
 	  let csvString = data;
+
+	  console.log("csvString",csvString)
+	  
 	  sessionStorage.data = csvString
 		.replace(/(?:\r\n|\r|\n)/g, "\\n")
-		.slice(0, -2);
+		// .slice(0, -2);
   
 	  sessionStorage.config = conf; //.replace("data.csv",encodeURIComponent(csvString))
 	  config = eval(sessionStorage.config);
