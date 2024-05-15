@@ -5,7 +5,6 @@
 	import FigureAdder from "../FigureAdder.svelte";
 	import {onMount} from "svelte"
 	import {now} from "../currentChoices"
-  	import Tidy from "./Tidy.svelte"
 	import { HSplitPane } from 'svelte-split-pane'
 	let config, script, chartCss, chosenName, currentProject, figureName, loaded=0
 	  
@@ -199,8 +198,8 @@
   {#if 1}
 
 
-  <HSplitPane>
-    <left slot="left" class="splitScreen">
+
+    <div class="left">
       <!--This is what D3 renders-->
 <div class="chartBox">
 	<h5 id="accessibleSummary" class="visuallyhidden">.</h5>
@@ -210,9 +209,9 @@
 	<h5 id="source">.</h5>
   </div>
   <!--End of what D3 renders-->
-    </left>
+    </div>
 
-    <right slot="right" class="splitScreen">
+    <div class="right">
       <b color="#0f8243">
         <a
           href="https://docs.google.com/spreadsheets/d/1qlDgJIJCdumMRwLmI1_KF4yAKwtDoHmToYKEwZMq_zU/edit?usp=sharing"
@@ -222,7 +221,7 @@
         </a>
       </b>
 
-
+{#if $now.currentChart}
   {#if $now.currentChart.config.essential}
   <a
 	href={$now.currentChart.config.essential.graphic_data_url}
@@ -530,23 +529,23 @@ console.log("config",config)
 	{/each}
   {/if}
 {/each}
+{/if}
+		</div>
 
-</right>
-</HSplitPane>
 {/if}
 <div class="highlighted" style="width:0; height:0;" />
   
   <style>
 	@import '../global.css'; 
-	:global(.left){
-	
-	margin-top: 80px;
+	.left{
     height: calc(100vh - 100px) !important;
+	width:50vw;
+	position: absolute;
+	margin-top: 80px;
+	left:0
  	}
-	:global(.separator){
-		height:  calc(100vh - 100px) !important;
-	}
-	:global(.right){
+
+	.right{
 	margin-top: 80px;
 	position: absolute;
     top: 0;

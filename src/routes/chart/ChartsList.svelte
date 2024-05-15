@@ -6,7 +6,7 @@
   import {onMount} from "svelte"
   import {now} from "../currentChoices"
 
-  let config, script, chartCss, chosenName, currentProject, figureName, loaded=0
+  let config, code, chartCss, chosenName, currentProject, figureName, loaded=0
 	
   async function setupDB(projectName, figureName, chartName, chartScripts) {
       try {
@@ -166,7 +166,7 @@
       JSON.stringify(config) +
       ")";
     //console.log("script", sessionStorage.script);
-    script = eval(sessionStorage.script);
+    code = eval(sessionStorage.script);
     
     return config;
   }
@@ -195,22 +195,39 @@
   {/if}
 </svelte:head>
 
+
+<style>
+  /* @import '../global.css';  */
+  th{
+    text-align: left;
+  }
+  td,th{padding:0px 5px 0px 10px}
+  table{border:1px solid grey}
+  .outer{
+    margin: 0px auto;
+    max-width: 700px;
+  }
+
+.chartBox{
+  background-color: white;
+}
+.controlTable{
+  padding: 5px;
+}
+</style>
+
 <div class="outer">
   <div class="controls">
 {#if $now.currentProject}
-<!-- <label for="projects">Select a project:  
-  <select name="projects" bind:value={currentProject}>
-    {#each Object.values($projects) as project}
-      <option value={project}>{project.projectName}</option>
-    {/each}
-  </select></label><br><br> -->
-
   <label for="addRemove">Add or remove figures from {$now.currentProject.projectName}</label>
-    <table name="addRemove" class="controlTable">{#if $now.currentProject && $charts}
+    <table name="addRemove" class="controlTable">
+      {#if $now.currentProject && $charts}
       <tr><th ><b>Figure name</b></th><th>Chart type</th><th style="color:red"></th></tr>
       {#each $now.currentProject.figures as figure}
         <tr><td><button  on:click={()=>$now.currentChart=figure}>{figure.figureName}</button></td><td>{figure.chartName}</td><td><button style="color:red">X</button></td></tr>
-      {/each}{/if}
+      {/each}
+      
+{/if}
 
       {#if $now.currentChart}
       <tr></tr>
@@ -258,27 +275,3 @@
   <h5 id="source">.</h5>
 </div></div>
 <!--End of what D3 renders-->
-
-
-
-<style>
-  @import '../global.css'; 
-  th{
-    text-align: left;
-  }
-  td,th{padding:0px 5px 0px 10px}
-  table{border:1px solid grey}
-  .outer{
-    margin: 0px auto;
-    max-width: 700px;
-  }
-.controls{
-  /* background-color:red */
-}
-.chartBox{
-  background-color: white;
-}
-.controlTable{
-  padding: 5px;
-}
-</style>
