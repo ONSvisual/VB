@@ -5,6 +5,7 @@
   import FigureAdder from "../FigureAdder.svelte";
   import {onMount} from "svelte"
   import {now} from "../currentChoices"
+  import { symbolWye } from "d3";
 
   let config, code, chartCss, chosenName, currentProject, figureName, loaded=0
 	
@@ -14,14 +15,14 @@
             projectName: projectName,
             figures: []
         });
-        status = `${projectName} successfully created in DB`;
+        status = `${projectName} successfully created a new project in DB`;
         // Reset form:
         // projectName="";
         // figureName="";
         // chartName = "";
         // chartScripts = "";
       } catch (error) {
-        status = `Failed to add ${figureName}: ${error}`;
+        status = `No need for a new project?: ${error}`;
       }
       console.log("setupDB",status)
     }
@@ -31,11 +32,15 @@
           const id = await db.Projects.where('projectName').equals(projectName).modify(x =>
          x.figures.push({figureName:figureName, chartName:chartName, chartScripts:chartScripts}) );
           status = `${chartName} successfully added to ${projectName} as ${figureName}`;
-        // Reset form:
-        // projectName="";
-        // figureName="";
-        // chartName = "";
-        // chartScripts = "";
+
+          //Something to update $now from DB
+      $now.currentProject.figures.push({figureName:figureName, chartName:chartName, chartScripts:chartScripts})
+      $now=$now
+      //  Reset form:
+        projectName="";
+        figureName="";
+        chartName = "";
+        chartScripts = "";
       } catch (error) {
         status = `Failed to add ${figureName}: ${error}`;
       }
@@ -60,16 +65,15 @@
   //$: currentProject = (sessionStorage && sessionStorage.project) ? JSON.parse(sessionStorage.project) : {}
 
   let loadProject=(pr)=>{
-    console.log ("pr", pr)
-
+    
     if (pr && pr.figures) $now.currentChart = pr.figures[0]
     if ($now.currentChart) populate(
       $now.currentChart.chartName,
-      $now.currentChart.chartScripts.config,
-      $now.currentChart.chartScripts.script,
-      $now.currentChart.chartScripts.data,
-      $now.currentChart.chartScripts.css,
-      $now.currentChart.chartScripts.comparison
+      $now.currentChart.chartScripts.config_js,
+      $now.currentChart.chartScripts.script_js,
+      $now.currentChart.chartScripts.data_csv,
+      $now.currentChart.chartScripts.chart_css,
+      $now.currentChart.chartScripts.comparison_csv
     );
     loaded=1
   }
@@ -149,11 +153,10 @@
     let csvString = data;
     sessionStorage.data = csvString
       .replace(/(?:\r\n|\r|\n)/g, "\\n")
-      .slice(0, -2);
+      //.slice(0, -2);
 
     sessionStorage.config = conf; //.replace("data.csv",encodeURIComponent(csvString))
     config = eval(sessionStorage.config);
-    //console.log(JSON.stringify(config));
     $now.currentChart.config=config;
     sessionStorage.script =
       scr.replace(
@@ -165,7 +168,6 @@
       " load(" +
       JSON.stringify(config) +
       ")";
-    //console.log("script", sessionStorage.script);
     code = eval(sessionStorage.script);
     
     return config;
@@ -177,21 +179,20 @@
   $: $now.currentChart &&
     populate(
       $now.currentChart.chartName,
-      $now.currentChart.chartScripts.config,
-      $now.currentChart.chartScripts.script,
-      $now.currentChart.chartScripts.data,
-      $now.currentChart.chartScripts.css,
-      $now.currentChart.chartScripts.comparison
+      $now.currentChart.chartScripts.config_js,
+      $now.currentChart.chartScripts.script_js,
+      $now.currentChart.chartScripts.data_csv,
+      $now.currentChart.chartScripts.chart_css,
+      $now.currentChart.chartScripts.comparison_csv
     );
   
   let saveChart = () => 1;
-  //$: console.log("chosenName", chosenName);
   onMount(()=>loadProject($now.currentProject))
 </script>
 
 <svelte:head>
   {#if $now.currentChart}
-  {@html `<style type="text/css" id="injectedStyle"> ${$now.currentChart.chartScripts.css} <\/style>`}
+  {@html `<style type="text/css" id="injectedStyle"> ${$now.currentChart.chartScripts.chart_css} <\/style>`}
   {/if}
 </svelte:head>
 

@@ -67,11 +67,11 @@
 	  if (pr && pr.figures) $now.currentChart = pr.figures[0]
 	  if ($now.currentChart) populate(
 		$now.currentChart.chartName,
-		$now.currentChart.chartScripts.config,
-		$now.currentChart.chartScripts.script,
-		$now.currentChart.chartScripts.data,
-		$now.currentChart.chartScripts.css,
-		$now.currentChart.chartScripts.comparison
+      $now.currentChart.chartScripts.config_js,
+      $now.currentChart.chartScripts.script_js,
+      $now.currentChart.chartScripts.data_csv,
+      $now.currentChart.chartScripts.chart_css,
+      $now.currentChart.chartScripts.comparison_csv
 	  );
 	  loaded=1
 	}
@@ -179,11 +179,11 @@
 	$: $now.currentChart &&
 	  populate(
 		$now.currentChart.chartName,
-		$now.currentChart.chartScripts.config,
-		$now.currentChart.chartScripts.script,
-		$now.currentChart.chartScripts.data,
-		$now.currentChart.chartScripts.css,
-		$now.currentChart.chartScripts.comparison
+      $now.currentChart.chartScripts.config_js,
+      $now.currentChart.chartScripts.script_js,
+      $now.currentChart.chartScripts.data_csv,
+      $now.currentChart.chartScripts.chart_css,
+      $now.currentChart.chartScripts.comparison_csv
 	  );
 	
 	  onMount(()=>loadProject($now.currentProject))
@@ -194,7 +194,7 @@
   
   <svelte:head>
 	{#if $now.currentChart}
-	{@html `<style type="text/css" id="injectedStyle"> ${$now.currentChart.chartScripts.css} <\/style>`}
+	{@html `<style type="text/css" id="injectedStyle"> ${$now.currentChart.chartScripts.chart_css} <\/style>`}
 	{/if}
   </svelte:head>
   
@@ -265,7 +265,7 @@
   
   <div class="dataBox">
 {#if $now.currentChart}
-	<Tidy csv={$now.currentChart.chartScripts.data}/>
+	<Tidy csv={$now.currentChart.chartScripts.data_csv}/>
 {/if}
 </div>
   
