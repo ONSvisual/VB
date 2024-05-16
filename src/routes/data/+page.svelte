@@ -233,10 +233,10 @@
   }
   .chartBox{
 	background-color: white;
-	width:calc(50% - 5px);
+	width:calc(50% - 30px);
 	position:absolute;
-	left:calc(50% + 5px);
-	bottom:0;
+	right:5px;
+	top:200px;
 	height:50%;
   }
   .dataBox{
@@ -245,7 +245,7 @@
 	height:50%;
 	position:absolute;
 	left:5px;
-	bottom:0
+	top:200px
   }
   .controlTable{
 	padding: 5px;

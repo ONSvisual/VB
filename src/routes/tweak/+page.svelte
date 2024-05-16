@@ -506,7 +506,7 @@ console.log("config",config)
 	@import '../global.css'; 
 	.left{
     height: calc(100vh - 100px) !important;
-	width:50vw;
+	width:calc(50vw - 20px);
 	position: absolute;
 	margin-top: 80px;
 	left:0
@@ -515,6 +515,7 @@ console.log("config",config)
 	.right{
 	margin-top: 80px;
 	position: absolute;
+	width:calc(50vw - 20px);
     top: 0;
     right: 0;
     height: calc(100vh - 100px) !important;

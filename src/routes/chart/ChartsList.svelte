@@ -67,14 +67,14 @@
   let loadProject=(pr)=>{
     
     if (pr && pr.figures) $now.currentChart = pr.figures[0]
-    if ($now.currentChart) populate(
-      $now.currentChart.chartName,
-      $now.currentChart.chartScripts.config_js,
-      $now.currentChart.chartScripts.script_js,
-      $now.currentChart.chartScripts.data_csv,
-      $now.currentChart.chartScripts.chart_css,
-      $now.currentChart.chartScripts.comparison_csv
-    );
+    // if ($now.currentChart) populate(
+    //   $now.currentChart.chartName,
+    //   $now.currentChart.chartScripts.config_js,
+    //   $now.currentChart.chartScripts.script_js,
+    //   $now.currentChart.chartScripts.data_csv,
+    //   $now.currentChart.chartScripts.chart_css,
+    //   $now.currentChart.chartScripts.comparison_csv
+    // );
     loaded=1
   }
 
@@ -187,7 +187,7 @@
     );
   
   let saveChart = () => 1;
-  onMount(()=>loadProject($now.currentProject))
+  onMount(()=>setTimeout(()=>loadProject($now.currentProject), 100))
 </script>
 
 <svelte:head>
