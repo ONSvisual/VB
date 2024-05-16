@@ -28,10 +28,6 @@
     $: console.log("csv",csv)
 	let data = [];
 	let columns=[];
-	let tidy=[];
-	let name = 'column';
-	let tidycolumns=[];
-	let href ='';
 	
 	
 	function readCSV(csv){
@@ -42,7 +38,7 @@
     function readDSV(csv){
         data=tsvParse(csv)
 		columns = data.columns
-        $now.currentChart.chartScripts.data=csvFormat(tsvParse(csv))
+        $now.currentChart.chartScripts.data_csv=csvFormat(tsvParse(csv))
         unedited=false
 	}
 

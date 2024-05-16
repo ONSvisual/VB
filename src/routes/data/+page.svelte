@@ -10,43 +10,6 @@
 
 	let config, script, chartCss, chosenName, currentProject, figureName, loaded=0
 	  
-	async function setupDB(projectName, figureName, chartName, chartScripts) {
-		try {
-			const id = await db.Projects.add({
-			  projectName: projectName,
-			  figures: []
-		  });
-		  status = `${projectName} successfully created in DB`;
-		  // Reset form:
-		  // projectName="";
-		  // figureName="";
-		  // chartName = "";
-		  // chartScripts = "";
-		} catch (error) {
-		  status = `Failed to add ${figureName}: ${error}`;
-		}
-		console.log("setupDB",status)
-	  }
-  
-	  async function addFigureToProject(projectName, figureName, chartName, chartScripts) {
-		try {
-			const id = await db.Projects.where('projectName').equals(projectName).modify(x =>
-		   x.figures.push({figureName:figureName, chartName:chartName, chartScripts:chartScripts}) );
-			status = `${chartName} successfully added to ${projectName} as ${figureName}`;
-		  // Reset form:
-		  // projectName="";
-		  // figureName="";
-		  // chartName = "";
-		  // chartScripts = "";
-		} catch (error) {
-		  status = `Failed to add ${figureName}: ${error}`;
-		}
-		console.log("addFigureToProject",status)
-	  }
-  
-	
-  
-	// $: theScript = `<style type="text/css" id="injectedStyle"> ${chartCss} <\/style>`; 
   
 	$: charts = liveQuery(async () => {
 	  const charts = await db.Templates.toArray();
@@ -211,7 +174,7 @@
 	  {/each}
 	</select></label><br><br> -->
   
-	<label for="addRemove">Add or remove figures from {$now.currentProject.projectName}</label>
+	<label for="addRemove">Select or remove figures from {$now.currentProject.projectName}</label>
 	  <table name="addRemove" class="controlTable">{#if $now.currentProject && $charts}
 		<tr><th ><b>Figure name</b></th><th>Chart type</th><th style="color:red"></th></tr>
 		{#each $now.currentProject.figures as figure}
@@ -220,25 +183,7 @@
   
 		{#if $now.currentChart}
 		<tr></tr>
-		<hr>
-		<tr><td>Add a figure:</td><td></td><td></td></tr>
-		<tr>
-		  <td>
-			<input type="text" placeholder="Figure name" bind:value={figureName}/>
-		  </td>
-		  <td>
-			{#if $charts}
-			<select name="chart" bind:value={$now.currentChart}>
-			  {#each $charts as chart}
-				<option value={chart}>{chart.chartName}</option>
-			  {/each}</select
-			>
-			{/if}
-		   </td>
-		  <td>
-			<button on:click={()=>{setupDB($now.currentProject.projectName, figureName, $now.currentChart.chartName, $now.currentChart.chartScripts);addFigureToProject($now.currentProject.projectName, figureName, $now.currentChart.chartName, $now.currentChart.chartScripts)}}>Save</button>
-		  </td>
-		</tr>
+		
   
   {/if}
   

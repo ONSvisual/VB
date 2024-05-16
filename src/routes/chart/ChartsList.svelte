@@ -3,7 +3,7 @@
   import { liveQuery } from "dexie";
   import { db } from "../db";
   import FigureAdder from "../FigureAdder.svelte";
-  import {onMount} from "svelte"
+  import {onMount, afterUpdate} from "svelte"
   import {now} from "../currentChoices"
   import { symbolWye } from "d3";
 
@@ -198,7 +198,7 @@
 
 
 <style>
-  /* @import '../global.css';  */
+  @import '../global.css'; 
   th{
     text-align: left;
   }
@@ -225,7 +225,7 @@
       {#if $now.currentProject && $charts}
       <tr><th ><b>Figure name</b></th><th>Chart type</th><th style="color:red"></th></tr>
       {#each $now.currentProject.figures as figure}
-        <tr><td><button  on:click={()=>$now.currentChart=figure}>{figure.figureName}</button></td><td>{figure.chartName}</td><td><button style="color:red">X</button></td></tr>
+        <tr><td><button  on:click={()=>{$now.currentChart=figure}}>{figure.figureName}</button></td><td>{figure.chartName}</td><td><button style="color:red">X</button></td></tr>
       {/each}
       
 {/if}

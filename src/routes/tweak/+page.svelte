@@ -27,54 +27,8 @@
       console.log("data update:",status)
     }
 	
-	async function setupDB(projectName, figureName, chartName, chartScripts) {
-		try {
-			const id = await db.Projects.add({
-			  projectName: projectName,
-			  figures: []
-		  });
-		  status = `${projectName} successfully created in DB`;
-		  // Reset form:
-		  // projectName="";
-		  // figureName="";
-		  // chartName = "";
-		  // chartScripts = "";
-		} catch (error) {
-		  status = `Failed to add ${figureName}: ${error}`;
-		}
-		console.log("setupDB",status)
-	  }
-  
-	  async function addFigureToProject(projectName, figureName, chartName, chartScripts) {
-		try {
-			const id = await db.Projects.where('projectName').equals(projectName).modify(x =>
-		   x.figures.push({figureName:figureName, chartName:chartName, chartScripts:chartScripts}) );
-			status = `${chartName} successfully added to ${projectName} as ${figureName}`;
-		  // Reset form:
-		  // projectName="";
-		  // figureName="";
-		  // chartName = "";
-		  // chartScripts = "";
-		} catch (error) {
-		  status = `Failed to add ${figureName}: ${error}`;
-		}
-		console.log("addFigureToProject",status)
-	  }
-  
-	
-  
-	// $: theScript = `<style type="text/css" id="injectedStyle"> ${chartCss} <\/style>`; 
-  
-	$: charts = liveQuery(async () => {
-	  const charts = await db.Templates.toArray();
-	  return charts;
-	});
-  
-	$: projects = liveQuery(async () => {
-	  const projects = await db.Projects.toArray();
-	  return projects;
-	});
-  
+
+
   
 	//$: currentProject = (sessionStorage && sessionStorage.project) ? JSON.parse(sessionStorage.project) : {}
   
