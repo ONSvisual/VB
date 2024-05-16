@@ -241,7 +241,7 @@ console.log("config",config)
 			  type="number"
 			  bind:value={$now.currentChart.config[main][sub]}
 			  on:change={(e) => {
-				$now.currentChart.config[main][sub] = e.target.value
+				$now.currentChart.config[main][sub] = +e.target.value
 				config = ($now.currentChart.config)
 	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
@@ -328,7 +328,7 @@ console.log("config",config)
 					  class="full"
 					  id="field_{subsubsub}"
 					  on:change={(e) => {
-						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						$now.currentChart.config[main][sub][subsub][subsubsub] = +e.target.value
 						config = ($now.currentChart.config)
 	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
@@ -392,7 +392,7 @@ console.log("config",config)
 					  type="number"
 					  id="text_{subsubsub}"
 					  on:change={(e) => {
-						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						$now.currentChart.config[main][sub][subsub][subsubsub] = +e.target.value
 						config = ($now.currentChart.config)
 	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
@@ -405,7 +405,7 @@ console.log("config",config)
 					  type="number"
 					  id="number_{subsubsub}"
 					  on:change={(e) => {
-						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						$now.currentChart.config[main][sub][subsub][subsubsub] = +e.target.value
 						config = ($now.currentChart.config)
 	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
@@ -419,7 +419,7 @@ console.log("config",config)
 					  type="number"
 					  id="field_{subsubsub}"
 					  on:change={(e) => {
-						$now.currentChart.config[main][sub][subsub][subsubsub] = e.target.value
+						$now.currentChart.config[main][sub][subsub][subsubsub] = +e.target.value
 						config = ($now.currentChart.config)
 	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
@@ -461,7 +461,7 @@ console.log("config",config)
 				<input
 				  type="number"
 				  on:change={(e) => {
-					$now.currentChart.config[main][sub][subsub] = e.target.value
+					$now.currentChart.config[main][sub][subsub] = +e.target.value
 					config = ($now.currentChart.config)
 	  $now.currentChart.chartScripts.config_js = "config = " + JSON.stringify(config)
 console.log("config",config)
