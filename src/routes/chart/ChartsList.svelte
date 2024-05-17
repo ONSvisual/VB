@@ -47,7 +47,25 @@
       console.log("addFigureToProject",status)
     }
 
-  
+    async function removeFigureFromProject(projectName, figureName) {
+      try {
+          const id = await db.Projects.where('projectName').equals(projectName).modify(x =>
+         x.figures.find({figureName:figureName, chartName:chartName, chartScripts:chartScripts}) );
+          status = `${chartName} successfully added to ${projectName} as ${figureName}`;
+
+          //Something to update $now from DB
+      $now.currentProject.figures.push({figureName:figureName, chartName:chartName, chartScripts:chartScripts})
+      $now=$now
+      //  Reset form:
+        projectName="";
+        figureName="";
+        chartName = "";
+        chartScripts = "";
+      } catch (error) {
+        status = `Failed to add ${figureName}: ${error}`;
+      }
+      console.log("addFigureToProject",status)
+    }
 
   // $: theScript = `<style type="text/css" id="injectedStyle"> ${chartCss} <\/style>`; 
 

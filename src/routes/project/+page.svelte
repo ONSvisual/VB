@@ -10,7 +10,9 @@
   	});
 
 	$: console.log("projects" , $projects)
-
+function del(projName){
+	db.Projects.delete(projName)
+}
 	async function setupDB(projectName) {
       try {
   
@@ -54,7 +56,7 @@ You have {$projects.length} project{$projects.length>1?"s":""} set up:
 		<td><b>{project.projectName}</b>:</td> 
 		<td>{project.figures.length} figure{project.figures.length!==1?"s":""}</td> 
 		<td><button on:click={()=>{$now.currentProject=project; goto("/chart", {"invalidateAll":true})}}>select</button></td>
-		<td><button on:click={()=>{"X"}}>delete</button></td>
+		<td><button on:click={()=>del(project.projectName)}>delete</button></td>
 	</tr>
 	{/each}
 </table>

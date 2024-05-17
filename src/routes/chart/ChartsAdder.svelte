@@ -1,4 +1,3 @@
-<!-- FriendAdder.svelte -->
 <script>
     import { db } from "../db";
     import VB from "./VB";
@@ -24,6 +23,8 @@
       }
       
     }
+
+
 
     Object.keys(VB.Templates).forEach(e=>addData(e, VB.Templates[e]))
 console.log(status)
